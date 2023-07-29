@@ -1,7 +1,7 @@
 import React,{useState, useEffect} from 'react';
 
 function App() {
-  const [TempoEmSegundos, setTempoEmSegundos] = useState(-1 * 60);
+  const [TempoEmSegundos, setTempoEmSegundos] = useState(0 * 60);
   const Minutos = Math.floor (TempoEmSegundos / 60);
   const Segundos = (TempoEmSegundos % 60);
   
