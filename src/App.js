@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import './App.css';
 
 const Cronometro = () => {
   const [TempoEmSegundos, setTempoEmSegundos] = useState(0);
