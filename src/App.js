@@ -1,28 +1,68 @@
-import React,{useState, useEffect} from 'react';
+import React, { useState, useRef } from 'react';
 
-function App() {
-  const [TempoEmSegundos, setTempoEmSegundos] = useState(0 * 60);
-  const Minutos = Math.floor (TempoEmSegundos / 60);
-  const Segundos = (TempoEmSegundos % 60);
-  
-  useEffect(() => {
-    if(TempoEmSegundos===0){
-      alert('O tempo acabou!!!');
-      return
-    }else{setTimeout(() => { setTempoEmSegundos(TempoEmSegundos-1) }, 1000)}
-      
-  }, [TempoEmSegundos])
-  
+const Cronometro = () => {
+  const [TempoEmSegundos, setTempoEmSegundos] = useState(0);
+  const [running, setRunning] = useState(false);
+  const intervalRef = useRef(null);
+
+  const handleStartStop = () => {
+    setRunning(!running);
+    if (!running) {
+      intervalRef.current = setInterval(() => {
+        setTempoEmSegundos((prevTime) => {
+          if (prevTime <= 0) {
+            clearInterval(intervalRef.current);
+            setRunning(false);
+            alert('O tempo acabou!!!');
+            return 0;
+          } else {
+            return prevTime - 1;
+          }
+        });
+      }, 1000);
+    } else {
+      clearInterval(intervalRef.current);
+    }
+  };
+
+  const handleReset = () => {
+    clearInterval(intervalRef.current);
+    setTempoEmSegundos(0);
+    setRunning(false);
+  };
+
+  const handleInputChange = (event) => {
+    const inputTime = parseInt(event.target.value, 10);
+    if (inputTime >= 0) {
+      setTempoEmSegundos(inputTime);
+    }
+  };
+
+  const formatTime = (timeInSeconds) => {
+    const Minutos = Math.floor(timeInSeconds / 60);
+    const Segundos = timeInSeconds % 60;
+    return `${Minutos.toString().padStart(2, '0')}:${Segundos.toString().padStart(2, '0')}`;
+  };
+
   return (
-    
-    <div className="App">
-
-      <input type="number" name="Tempo" id="tempo" />
-      <span>{Minutos.toString().padStart(2,"0")}</span>
-      <span>:</span>
-      <span>{Segundos.toString().padStart(2,"0")}</span>      
+    <div>
+      <h1>Cronômetro de Contagem Regressiva</h1>
+      <div className="timer">{formatTime(TempoEmSegundos)}</div>
+      <input
+        type="number"
+        value={TempoEmSegundos}
+        onChange={handleInputChange}
+        disabled={running}
+        placeholder="Digite o tempo em segundos..."
+      />
+      <button onClick={handleStartStop}>
+        {running ? 'Parar' : 'Iniciar'}
+      </button>
+      <button onClick={handleReset} disabled={TempoEmSegundos <= 0}>
+        Reiniciar
+      </button>
     </div>
   );
-}
+};
 
-export default App;
+export default Cronometro;
